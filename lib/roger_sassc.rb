@@ -7,22 +7,19 @@ module RogerSassc
   class << self
     attr_accessor :load_paths
 
-    def append_path(path)
-      if load_paths.nil?
-        self.load_paths = DEFAULT_LOAD_PATHS.dup
-        # Legacy reasons stuff for gems etc.
-        if defined?(Sass.load_paths)
-          self.load_paths = load_paths + Sass.load_paths
-        end
-      end
-      load_paths.push(path)
+    # Add one or more paths to the array,
+    # that will be given to libsass
+    def append_path(*paths)
+      @load_paths.push(*(paths.flatten))
     end
   end
-
-  def load_paths
-    self.class.load_paths
-  end
 end
+
+# Add some sensible paths, convention over configuration
+RogerSassc.load_paths = RogerSassc::DEFAULT_LOAD_PATHS.dup
+
+# Legacy Sass load_paths copy
+RogerSassc.append_path(Sass.load_paths) if defined?(Sass.load_paths)
 
 require "roger_sassc/middleware"
 require "roger_sassc/processor"

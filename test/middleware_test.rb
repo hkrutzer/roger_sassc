@@ -34,11 +34,6 @@ module RogerSassc
       assert_equal @request.get("test/fixtures/general.css").body, expected_css
     end
 
-    def test_global_load_path
-      assert_equal RogerSassc.load_paths,
-                   ["html/stylesheets", "bower_components", "test/fixtures"]
-    end
-
     def test_source_maps
       pend "To implement"
     end
