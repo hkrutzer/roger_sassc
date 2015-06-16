@@ -26,4 +26,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "mocha", "~> 1.1.0"
   spec.add_development_dependency "test-unit", "~> 3.1.2"
   spec.add_development_dependency "simplecov", "~> 0.10.0"
+  spec.add_development_dependency "rubocop", "~> 0.31.0"
 end
