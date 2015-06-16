@@ -5,11 +5,11 @@ require "roger_sassc/version"
 Gem::Specification.new do |spec|
   spec.name          = "roger_sassc"
   spec.version       = RogerSassc::VERSION
+
   spec.authors       = ["Edwin van der Graaf"]
   spec.email         = ["edwin@digitpaint.nl"]
-  spec.summary       = "hi"
-  spec.description   = "la"
-  spec.homepage      = ""
+  spec.summary       = "Sass plugin for Roger based on libsass"
+  spec.homepage      = "https://github.com/DigitPaint/roger_sassc"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
