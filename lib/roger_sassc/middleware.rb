@@ -54,6 +54,9 @@ module RogerSassc
     end
 
     def compile_scss(scss_path)
+      # Supply the filename for load path resolving
+      @options[:filename] = scss_path.to_s
+
       SassC::Engine.new(File.read(scss_path), @options).render
     end
 
@@ -65,7 +68,7 @@ module RogerSassc
       # Build debug string
       debug = "/*\n"
       debug << "#{sassc_error}\n\n"
-      debug << "Load paths: \n"
+      debug << "Load paths:\n"
       debug << "#{@options[:load_paths]}\n\n"
       debug << "*/\n"
       debug << "body:before {\n"

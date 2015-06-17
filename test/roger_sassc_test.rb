@@ -15,25 +15,31 @@ module RogerSassc
 
     def test_append_load_path
       RogerSassc.append_path("a/b")
-      assert_equal RogerSassc.load_paths,
-                   ["html/stylesheets", "bower_components", "a/b"]
+      assert_equal ["bower_components", "a/b"],
+                   RogerSassc.load_paths
     end
 
     def test_append_load_path_with_multiple_params
       RogerSassc.append_path("a/b", "b/c")
-      assert_equal RogerSassc.load_paths,
-                   ["html/stylesheets", "bower_components", "a/b", "b/c"]
+      assert_equal ["bower_components", "a/b", "b/c"],
+                   RogerSassc.load_paths
     end
 
     def test_append_load_path_with_array
       RogerSassc.append_path(["a/b", "b/c"])
-      assert_equal RogerSassc.load_paths,
-                   ["html/stylesheets", "bower_components", "a/b", "b/c"]
+      assert_equal ["bower_components", "a/b", "b/c"],
+                   RogerSassc.load_paths
+    end
+
+    def test_appends_path_alias
+      RogerSassc.append_path("a/b", "b/c")
+      assert_equal ["bower_components", "a/b", "b/c"],
+                   RogerSassc.load_paths
     end
 
     def test_default_load_path
-      assert_equal RogerSassc.load_paths,
-                   ["html/stylesheets", "bower_components"]
+      assert_equal ["bower_components"],
+                   RogerSassc.load_paths
     end
   end
 end

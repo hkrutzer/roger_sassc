@@ -55,6 +55,7 @@ module RogerSassc
     end
 
     def compile_file(path)
+      @options[:filename] = path.to_s
       scss = File.read(path)
 
       File.open(path.gsub(/\.scss$/, ".css"), "w+") do |file|

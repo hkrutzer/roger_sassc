@@ -1,15 +1,15 @@
 /*
 Error: invalid property name
-        on line 2 of stdin
+        on line 2 of test/fixtures/errors/syntax.scss
 >>   background: #fff;
    -------------------^
 
 
-Load paths: 
-["html/stylesheets", "bower_components", "test/fixtures"]
+Load paths:
+["bower_components", "test/fixtures"]
 
 */
 body:before {
   white-space: pre;
   font-family: monospace;
-  content: 'Error: invalid property name\A        on line 2 of stdin\A>>   background: #fff;\A   -------------------^\A'; }
+  content: 'Error: invalid property name\A        on line 2 of test/fixtures/errors/syntax.scss\A>>   background: #fff;\A   -------------------^\A'; }
