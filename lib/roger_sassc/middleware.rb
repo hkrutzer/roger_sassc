@@ -29,8 +29,14 @@ module RogerSassc
       # Convert the url to an absolute path,
       # which is used to retrieve compile the scss
       if url.end_with?(".css") && scss_path = resolve_url(url)
-        css = compile_scss(scss_path)
-        respond(css)
+        env["rack.errors"].puts "Invoking ruby-sassc for #{scss_path}"
+
+        begin
+          css = compile_scss(scss_path)
+          respond(css)
+        rescue SassC::SyntaxError, SassC::NotRenderedError, SassC::InvalidStyleError => sassc_error
+          respond(debug_css(sassc_error))
+        end
       else
         @app.call(env)
       end
@@ -48,8 +54,24 @@ module RogerSassc
     end
 
     def compile_scss(scss_path)
-      engine = SassC::Engine.new(File.read(scss_path), @options)
-      engine.render
+      SassC::Engine.new(File.read(scss_path), @options).render
+    end
+
+    def debug_css(sassc_error)
+      # Replace regular line-ends with css compat strings
+      # via: http://stackoverflow.com/questions/9062988/newline-character-sequence-in-css-content-property
+      sassc_error_css_string = sassc_error.to_s.gsub("\n", "\\A")
+
+      # Build debug string
+      debug = "/*\n"
+      debug << "#{sassc_error}\n\n"
+      debug << "Load paths: \n"
+      debug << "#{@options[:load_paths]}\n\n"
+      debug << "*/\n"
+      debug << "body:before {\n"
+      debug << "  white-space: pre;\n"
+      debug << "  font-family: monospace;\n"
+      debug << "  content: '#{sassc_error_css_string}'; }\n"
     end
 
     def resolver

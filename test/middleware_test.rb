@@ -34,12 +34,11 @@ module RogerSassc
       assert_equal @request.get("/test/fixtures/general.css").body, expected_css
     end
 
-    def test_source_maps
-      pend "To implement"
-    end
-
-    def test_write_to_fs
-      pend "To implement"
+    def test_debug_error
+      path = fixture_path "errors/syntax.scss"
+      expected_css = fixture "errors/syntax.css"
+      @middleware.resolver = mock_resolver("test/fixtures/errors/syntax.scss", path)
+      assert_equal expected_css, @request.get("test/fixtures/errors/syntax.css").body
     end
 
     private

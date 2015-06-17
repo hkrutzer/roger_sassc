@@ -41,6 +41,10 @@ module RogerSassc
       assert_path_not_exist files[1]
     end
 
+    def test_processor_raises_on_compilation_errors
+      pend "Validate that the processors just raises with errors in scss files"
+    end
+
     private
 
     def release_mock_with_file

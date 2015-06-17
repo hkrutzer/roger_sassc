@@ -24,9 +24,7 @@ TODO: Write usage instructions here
 
 ## Work in progress
 
-* Source maps support
-* Write file to file system for easy caching
-* Works with autoprefixer
+* Fix documentation
 
 ## Notes
 
