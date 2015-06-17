@@ -63,3 +63,5 @@ module RogerSassc
     end
   end
 end
+
+Roger::Release::Processors.register(:sassc, RogerSassc::Processor)
