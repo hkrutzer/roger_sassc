@@ -1,3 +1,4 @@
+require "test_helper"
 require "roger_sassc"
 
 module RogerSassc
