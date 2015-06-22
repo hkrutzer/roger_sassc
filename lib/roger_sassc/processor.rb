@@ -18,15 +18,10 @@ module RogerSassc
     # @option options [Hash]
     #   :build_files
     def call(release, options = {})
-      @release = release
       @options = @options.update(options)
 
       match = @options.delete(:match)
       skip = @options.delete(:skip)
-
-      @options[:load_paths] = @options[:load_paths].map do |path|
-        build_path + path
-      end
 
       # Sassify SCSS files
       files = release.get_files(match)
@@ -48,10 +43,6 @@ module RogerSassc
 
     def clean_files(files)
       files.each { |f| File.unlink(f) }
-    end
-
-    def build_path
-      @release.project.path
     end
 
     def compile_file(path)
