@@ -21,7 +21,7 @@ module RogerSassc
     end
 
     def test_processor_can_be_called
-      assert(@processor.respond_to?(:call))
+      assert_respond_to(@processor, :call)
     end
 
     # Meh :(
