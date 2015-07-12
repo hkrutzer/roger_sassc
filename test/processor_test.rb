@@ -47,7 +47,15 @@ module RogerSassc
     end
 
     def test_processor_raises_on_compilation_errors
-      pend "Validate that the processors just raises with errors in scss files"
+      files = [
+        fixture_path(TEST_OUTPUT + "raise.scss")
+      ]
+
+      release = release_mock(files)
+
+      assert_raise SassC::SyntaxError do
+        @processor.call release
+      end
     end
 
     private
