@@ -26,7 +26,12 @@ module RogerSassc
 
     # Meh :(
     def test_call_processor
-      release, files = release_mock_with_file
+      files = [
+        fixture_path(TEST_OUTPUT + "general.scss"),
+        fixture_path(TEST_OUTPUT + "src/_variables.scss")
+      ]
+
+      release = release_mock(files)
       expected_css = fixture "output.css"
       @processor.call release
 
@@ -47,16 +52,11 @@ module RogerSassc
 
     private
 
-    def release_mock_with_file
-      files = [
-        fixture_path(TEST_OUTPUT + "general.scss"),
-        fixture_path(TEST_OUTPUT + "src/_variables.scss")
-      ]
-
+    def release_mock(files)
       release = mock(get_files: files,
                      log: ->(_s, _m) {})
 
-      [release, files]
+      release
     end
   end
 end
