@@ -34,11 +34,18 @@ module RogerSassc
       assert_equal @request.get("/test/fixtures/general.css").body, expected_css
     end
 
-    def test_debug_error
+    def test_debug_syntax_error
       path = fixture_path "errors/syntax.scss"
       expected_css = fixture "errors/syntax.css"
       @middleware.resolver = mock_resolver("test/fixtures/errors/syntax.scss", path)
       assert_equal expected_css, @request.get("test/fixtures/errors/syntax.css").body
+    end
+
+    def test_debug_import_error
+      path = fixture_path "errors/import.scss"
+      expected_css = '@import "trololo";'
+      @middleware.resolver = mock_resolver("test/fixtures/errors/import.scss", path)
+      assert_include @request.get("test/fixtures/errors/import.css").body, expected_css
     end
 
     private

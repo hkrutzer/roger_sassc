@@ -61,9 +61,11 @@ module RogerSassc
     end
 
     def debug_css(sassc_error)
-      # Replace regular line-ends with css compat strings
-      # via: http://stackoverflow.com/questions/9062988/newline-character-sequence-in-css-content-property
-      sassc_error_css_string = sassc_error.to_s.gsub("\n", "\\A")
+      # Replace
+      # * regular line-ends with css compat strings
+      #     via: http://stackoverflow.com/questions/9062988/newline-character-sequence-in-css-content-property
+      # * single quotes with double quotes for escaping
+      sassc_error_css_string = sassc_error.to_s.gsub("\n", "\\A").gsub("'", "\"")
 
       # Build debug string
       debug = "/*\n"
