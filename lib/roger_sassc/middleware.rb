@@ -10,6 +10,7 @@ module RogerSassc
   # compiles (with the help of libsass) the scss.
   class Middleware
     attr_writer :resolver
+    attr_accessor :project
 
     def initialize(app, options = {})
       @app = app
@@ -22,7 +23,7 @@ module RogerSassc
     end
 
     def call(env)
-      @project = env["roger.project"]
+      @project ||= env["roger.project"]
 
       url = ::Rack::Utils.unescape(env["PATH_INFO"].to_s).sub(%r{^/}, "")
 
