@@ -36,7 +36,9 @@ module RogerSassc
         begin
           css = compile_scss(scss_path)
           respond(css)
-        rescue SassC::SyntaxError, SassC::NotRenderedError, SassC::InvalidStyleError => sassc_error
+        rescue ::SassC::SyntaxError,
+               ::SassC::NotRenderedError,
+               ::SassC::InvalidStyleError => sassc_error
           respond(debug_css(sassc_error))
         end
       else
@@ -59,7 +61,7 @@ module RogerSassc
       # Supply the filename for load path resolving
       @options[:filename] = scss_path.to_s
 
-      SassC::Engine.new(File.read(scss_path), @options).render
+      ::SassC::Engine.new(File.read(scss_path), @options).render
     end
 
     def debug_css(sassc_error)

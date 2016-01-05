@@ -55,7 +55,7 @@ module RogerSassc
 
       stub_get_files(files)
 
-      assert_raise SassC::SyntaxError do
+      assert_raise ::SassC::SyntaxError do
         @processor.call @release
       end
     end

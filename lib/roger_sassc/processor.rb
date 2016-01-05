@@ -51,7 +51,7 @@ module RogerSassc
       scss = File.read(path)
 
       File.open(path.gsub(/\.scss$/, ".css"), "w+") do |file|
-        file.write(SassC::Engine.new(scss, @options).render)
+        file.write(::SassC::Engine.new(scss, @options).render)
       end
     end
   end
