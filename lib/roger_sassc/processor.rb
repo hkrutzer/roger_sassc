@@ -19,6 +19,7 @@ module RogerSassc
     #   :build_files
     def call(release, options = {})
       @options = @options.update(options)
+      @options[:roger_html_path] = release.build_path
 
       match = @options.delete(:match)
       skip = @options.delete(:skip)

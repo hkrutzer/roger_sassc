@@ -24,6 +24,7 @@ module RogerSassc
 
     def call(env)
       @project ||= env["roger.project"]
+      @options[:roger_html_path] = @project.html_path
 
       url = ::Rack::Utils.unescape(env["PATH_INFO"].to_s).sub(%r{^/}, "")
 
