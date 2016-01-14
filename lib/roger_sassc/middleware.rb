@@ -10,6 +10,7 @@ module RogerSassc
   # compiles (with the help of libsass) the scss.
   class Middleware
     attr_writer :resolver
+    attr_accessor :project
 
     def initialize(app, options = {})
       @app = app
@@ -22,7 +23,8 @@ module RogerSassc
     end
 
     def call(env)
-      @project = env["roger.project"]
+      @project ||= env["roger.project"]
+      @options[:roger_html_path] = @project.html_path
 
       url = ::Rack::Utils.unescape(env["PATH_INFO"].to_s).sub(%r{^/}, "")
 
@@ -34,7 +36,9 @@ module RogerSassc
         begin
           css = compile_scss(scss_path)
           respond(css)
-        rescue SassC::SyntaxError, SassC::NotRenderedError, SassC::InvalidStyleError => sassc_error
+        rescue ::SassC::SyntaxError,
+               ::SassC::NotRenderedError,
+               ::SassC::InvalidStyleError => sassc_error
           respond(debug_css(sassc_error))
         end
       else
@@ -57,7 +61,7 @@ module RogerSassc
       # Supply the filename for load path resolving
       @options[:filename] = scss_path.to_s
 
-      SassC::Engine.new(File.read(scss_path), @options).render
+      ::SassC::Engine.new(File.read(scss_path), @options).render
     end
 
     def debug_css(sassc_error)

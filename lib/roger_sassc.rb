@@ -29,5 +29,9 @@ RogerSassc.load_paths = RogerSassc::DEFAULT_LOAD_PATHS.dup
 # supply assets such as bourbon and neat
 RogerSassc.append_path(Sass.load_paths) if defined?(Sass.load_paths)
 
+# Load our custom SASSC functions
+require "roger_sassc/sassc/asset_functions"
+
+# The middleware and processor
 require "roger_sassc/middleware"
 require "roger_sassc/processor"

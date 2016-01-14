@@ -19,6 +19,7 @@ module RogerSassc
     #   :build_files
     def call(release, options = {})
       @options = @options.update(options)
+      @options[:roger_html_path] = release.build_path
 
       match = @options.delete(:match)
       skip = @options.delete(:skip)
@@ -50,7 +51,7 @@ module RogerSassc
       scss = File.read(path)
 
       File.open(path.gsub(/\.scss$/, ".css"), "w+") do |file|
-        file.write(SassC::Engine.new(scss, @options).render)
+        file.write(::SassC::Engine.new(scss, @options).render)
       end
     end
   end

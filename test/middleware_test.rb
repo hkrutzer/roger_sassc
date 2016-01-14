@@ -1,4 +1,6 @@
 require "test_helper"
+require "roger/testing/mock_project"
+
 require "./lib/roger_sassc/middleware"
 
 module RogerSassc
@@ -11,7 +13,17 @@ module RogerSassc
       @app =  proc { [200, {}, ["YAM"]] } # Yet another middleware
       @middleware = Middleware.new @app
 
+      # Inject mock project
+      @middleware.project = Roger::Testing::MockProject.new
+
+      # Avoid side-effect of cwd dir of test_construct
+      @middleware.project.construct.revert_cwd
+
       @request = Rack::MockRequest.new(@middleware)
+    end
+
+    def teardown
+      @middleware.project.destroy
     end
 
     def test_middleware_can_be_called
