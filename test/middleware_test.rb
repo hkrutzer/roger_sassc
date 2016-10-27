@@ -10,8 +10,16 @@ module RogerSassc
     include FixtureHelper
 
     def setup
+      setup_app(source_map: false, source_map_embed: false)
+    end
+
+    def teardown
+      @middleware.project.destroy
+    end
+
+    def setup_app(options = {})
       @app =  proc { [200, {}, ["YAM"]] } # Yet another middleware
-      @middleware = Middleware.new @app
+      @middleware = Middleware.new @app, options
 
       # Inject mock project
       @middleware.project = Roger::Testing::MockProject.new
@@ -20,10 +28,6 @@ module RogerSassc
       @middleware.project.construct.revert_cwd
 
       @request = Rack::MockRequest.new(@middleware)
-    end
-
-    def teardown
-      @middleware.project.destroy
     end
 
     def test_middleware_can_be_called
@@ -43,7 +47,25 @@ module RogerSassc
       path = fixture_path "general.scss"
       expected_css = fixture "output.css"
       @middleware.resolver = mock_resolver("test/fixtures/general.scss", path)
-      assert_equal @request.get("/test/fixtures/general.css").body, expected_css
+      assert_equal expected_css, @request.get("/test/fixtures/general.css").body
+    end
+
+    def test_response_with_source_map
+      setup_app(source_map: true)
+
+      path = fixture_path "general.scss"
+      expected_css = fixture "output.css.map"
+      @middleware.resolver = mock_resolver("test/fixtures/general.scss", path)
+      assert_equal expected_css, @request.get("/test/fixtures/general.css.map").body
+    end
+
+    def test_inline_source_map
+      setup_app(source_map: true)
+
+      path = fixture_path "general.scss"
+      expected_css = fixture "output_with_map.css"
+      @middleware.resolver = mock_resolver("test/fixtures/general.scss", path)
+      assert_equal expected_css, @request.get("/test/fixtures/general.css").body
     end
 
     def test_debug_syntax_error

@@ -16,7 +16,9 @@ module RogerSassc
       @app = app
 
       defaults = {
-        load_paths: RogerSassc.load_paths
+        load_paths: RogerSassc.load_paths,
+        source_map: true,
+        source_map_embed: true
       }
 
       @options = defaults.update(options)
@@ -27,28 +29,34 @@ module RogerSassc
       @options[:roger_html_path] = @project.html_path
 
       url = ::Rack::Utils.unescape(env["PATH_INFO"].to_s).sub(%r{^/}, "")
+      unless url.end_with?(".css") || url.end_with?(".css.map")
+        return @app.call(env)
+      end
 
       # Convert the url to an absolute path,
       # which is used to retrieve compile the scss
-      if url.end_with?(".css") && scss_path = resolve_url(url)
-        env["rack.errors"].puts "Invoking ruby-sassc for #{scss_path}"
+      scss_path = resolve_url(url)
 
-        begin
-          css = compile_scss(scss_path)
-          respond(css)
-        rescue ::SassC::SyntaxError,
-               ::SassC::NotRenderedError,
-               ::SassC::InvalidStyleError => sassc_error
-          respond(debug_css(sassc_error))
-        end
-      else
-        @app.call(env)
+      return @app.call(env) unless scss_path
+
+      env["rack.errors"].puts "Invoking ruby-sassc for #{scss_path}"
+      engine = create_scss_engine(scss_path)
+
+      begin
+        respond(engine, url.end_with?(".css.map"))
+      rescue ::SassC::SyntaxError,
+             ::SassC::NotRenderedError,
+             ::SassC::InvalidStyleError => sassc_error
+        respond_with_error(sassc_error)
       end
     end
 
     private
 
     def resolve_url(url)
+      # Make sure we strip off .map
+      url = url.gsub(/.map\Z/, "")
+
       # A .css file is requested in the browser
       url = url[0..-4] + "scss"
 
@@ -57,11 +65,16 @@ module RogerSassc
       resolver.url_to_path url, exact_match: true
     end
 
-    def compile_scss(scss_path)
+    def create_scss_engine(scss_path)
       # Supply the filename for load path resolving
       @options[:filename] = scss_path.to_s
+      if @options[:source_map] || @options[:source_map_embed]
+        @options[:source_map_file] = scss_path.to_s + ".map"
 
-      ::SassC::Engine.new(File.read(scss_path), @options).render
+        @options[:source_map] = true
+      end
+
+      ::SassC::Engine.new(File.read(scss_path), @options)
     end
 
     def debug_css(sassc_error)
@@ -87,12 +100,24 @@ module RogerSassc
       @resolver ||= Roger::Resolver.new(@project.html_path)
     end
 
-    def respond(css)
+    def respond_with_error(err)
       resp = ::Rack::Response.new do |res|
         res.status = 200
         res.headers["Content-Type"] = "text/css"
         # last modified header
-        res.write css
+        res.write debug_css(err)
+      end
+      resp.finish
+    end
+
+    def respond(engine, map = false)
+      css = engine.render
+
+      resp = ::Rack::Response.new do |res|
+        res.status = 200
+        res.headers["Content-Type"] = "text/css"
+        # last modified header
+        res.write map ? engine.source_map : css
       end
       resp.finish
     end
