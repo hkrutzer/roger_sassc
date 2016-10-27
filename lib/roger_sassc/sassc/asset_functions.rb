@@ -13,7 +13,7 @@ module RogerSassc
 
         if File.exist?(file)
           digest = Digest::SHA256.file(file).hexdigest
-          finger_printed_path = "#{path}?v=#{digest}"
+          finger_printed_path = "#{path.value}?v=#{digest}"
         else
           finger_printed_path = path.value
         end
